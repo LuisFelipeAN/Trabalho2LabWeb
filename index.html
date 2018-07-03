@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Desafio da Travessia do Rio</title>
+    <style>
+      body {
+        background: lightgray;
+      }
+      h1{
+        text-align: center;
+      }
+      .background {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 75%;
+        left: 12.5%;
+        margin: 0;
+        border: 0;
+      }
+      .terminoJogo{
+        width: 80%;
+        height: 500px;
+        position: absolute;
+        left: 10%;
+        top : 50px;
+        background: rgba(200, 200, 200, 0.5);
+      }
+      .log{
+        position: absolute;
+        width: 12.5%;
+        left: 0%;
+        top: 0px;
+        margin: 0;
+        height: 600px;
+        background: rgb(162, 122, 11);
+        overflow: auto;
+      }
+      .historico{
+        position: absolute;
+        width: 12.5%;
+        left: 87.5%;
+        top: 0px;
+        margin: 0;
+        height: 600px;
+        background: rgb(162, 122, 11);
+        overflow: auto;
+      }
+      body > div {
+        width: 90%;
+        left: 5%;
+        position: absolute;
+      }
+      .background > div {
+        position: absolute;
+      }
+      .background > img{
+        width: 100%;
+        height: 600px;
+      }
+      .background > div > img{
+        width: 80px;
+        height: 80px;
+      }
+      .background > div > img:hover{
+        width: 100px;
+        height: 100px;
+      }
+      #barco > img:hover,#barco > img{
+        width: 190px;
+        height: 105px;
+      }
+      #barco > div{
+        left: 20%;
+        top: 60px;
+        position: absolute;
+        width: 100%;
+      }
+      .terminoJogo > h1{
+          position: absolute;
+          width: 100%;
+          top: 160px;
+      }
+      .terminoJogo > button{
+          position: absolute;
+          width: 10%;
+          left: 45%;
+          top : 250px;
+      }
+      .log > h3 , .historico > h3{
+        width: 100%;
+        font-size: 15px;
+        text-align: center;
+      }
+      .log  p, .historico p{
+        width: 100%;
+        font-size: 10px;
+        text-align: left;
+        border: 0;
+        margin: 0;
+      }
+      .log > div{
+        padding-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Desafio da Travessia do Rio</h1>
+    <h2>Regras:</h1>
+    <ul>
+      <li>
+        De um lado da margem de um rio, estão uma raposa, uma galinha e um saco de milho e você, o barqueiro;
+      </li>
+      <li>
+        Como barqueiro, você só pode atravessar um único item por vez;
+      </li>
+      <li>
+        Se a galinha ficar sozinha com o milho, ela o come e você perde;
+      </li>
+      <li>
+        Se a raposa ficar sozinha com a galinha, ela come a galinha e você perde;
+      </li>
+      <li>
+        Se a raposa, a galinha e o milho cruzarem o rio, você vence;
+      </li>
+
+    </ul>
+    <h2>Jogabilidade:</h2>
+    <ul>
+      <li>Clicar com  mouse em cima do objeto coloca-o no barco;</li>
+      <li>Clicar no botão atravessar faz com que o barco mude de margem;</li>
+      <li>Clicar no botão retirar retira o objeto do barco caso haja algum;</li>
+    </ul>
+    <div>
+      <div class="log">
+        <h3>Movimentos</h3>
+        <div>
+        </div>
+      </div>
+      <div class="historico">
+        <h3>Historico</h3>
+        <div>
+        </div>
+      </div>
+      <div class="background">
+          <img src="rio.png" alt="Imagem de um rio">
+          <div id="raposa">
+                <img src="raposa.png" alt="Imagem de um rio">
+          </div>
+          <div id="galinha">
+                <img src="galinha.png" alt="Imagem de um rio">
+          </div>
+          <div id="milho">
+                <img src="milho.png" alt="Imagem de um rio">
+          </div>
+          <div id="barco">
+                <img src="barco.png" alt="Imagem de um rio">
+                <div>
+                  <button type="button" name="button">Atravessar</button>
+                  <button type="button" name="button">Retirar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+       var jogo = {
+         raposa : { lado: false, estaBarco : false},
+         galinha : { lado: false, estaBarco : false},
+         milho :  { lado: false, estaBarco : false},
+         barco: false,
+         gameOver : false,
+         mudarLadoRaposa: function (){
+             this.raposa.lado=!this.raposa.lado;
+         },
+         mudarLadoGalinha: function (){
+              this.galinha.lado=!this.galinha.lado;
+         },
+         mudarLadoMilho: function (){
+              this.milho.lado=!this.milho.lado;
+         },
+         mudarLadoBarco: function (){
+              this.barco=!this.barco;
+              this.callUpdate();
+         },
+         colocarRaposaBarco: function(){
+           if(this.raposa.lado==this.barco&&this.barcoVazio()){
+             this.raposa.estaBarco=!this.raposa.estaBarco;
+             this.callUpdate();
+             return true;
+           }else return false;
+
+         },
+         colocarGalinhaBarco: function(){
+           if(this.galinha.lado==this.barco&&this.barcoVazio()){
+             this.galinha.estaBarco=!this.galinha.estaBarco;
+             this.callUpdate();
+             return true;
+           }else return false;
+         },
+         colocarMilhoBarco: function(){
+           if(this.milho.lado==this.barco&&this.barcoVazio()){
+             this.milho.estaBarco=!this.milho.estaBarco;
+             this.callUpdate();
+             return true;
+           }else return false;
+         },
+         retirarAnimalBarco: function(){
+           if(this.raposa.estaBarco){
+             this.raposa.estaBarco=false;
+             this.callUpdate();
+             return {animal: "raposa",lado: this.raposa.lado};
+           }else if(this.galinha.estaBarco){
+              this.galinha.estaBarco=false;
+              this.callUpdate();
+              return {animal: "galinha",lado: this.galinha.lado};
+           }else if( this.milho.estaBarco){
+              this.milho.estaBarco=false;
+              this.callUpdate();
+              return {animal: "milho",lado: this.milho.lado};
+           }
+
+         },
+         barcoVazio : function(){
+           if(!this.raposa.estaBarco&&!this.galinha.estaBarco&&!this.milho.estaBarco){
+             return true;
+           }else return false;
+         },
+         todosAtravessaram : function(){
+           //Verifica se todos atravessaram o lago
+           if(!this.galinha.estaBarco&&!this.raposa.estaBarco&&!this.milho.estaBarco){
+             if(this.raposa.lado&&this.galinha.lado&&this.milho.lado){
+                this.gameOver = false;
+               return true;
+             }
+             return false;
+           }
+           return false;
+         },
+         reiniciar : function(){
+           this.raposa.lado=false;
+           this.galinha.lado=false;
+           this.milho.lado=false;
+           this.raposa.estaBarco=false;
+           this.galinha.estaBarco=false;
+           this.milho.estaBarco=false;
+           this.barco=false;
+           this.gameOver=false;
+         },
+         jogoPerdido:function(){
+           //verifica se a galinha ficou sozinha com a raposa
+           if(!this.galinha.estaBarco&&!this.raposa.estaBarco){
+               if((this.raposa.lado&&this.galinha.lado&&!this.milho.lado)||(!this.raposa.lado&&!this.galinha.lado&&this.milho.lado)){
+                 this.gameOver = true;
+                 return true;
+               }
+            }
+
+           //verifica se o milho ficou sozinho com a galinha
+           if(!this.galinha.estaBarco&&!this.milho.estaBarco){
+               if((!this.raposa.lado&&this.galinha.lado&&this.milho.lado)||(this.raposa.lado&&!this.galinha.lado&&!this.milho.lado)){
+                  this.gameOver = true;
+                 return true;
+               }
+            }
+            return false;
+         },
+         callUpdate: null
+       }
+       var raposa =  document.querySelector('#raposa');
+       var galinha =  document.querySelector('#galinha');
+       var milho =  document.querySelector('#milho');
+       var barco =  document.querySelector('#barco');
+       var log = document.querySelector('.log > div');
+       var historico = document.querySelector('.historico > div');
+       var divFimJogo = null;
+       var leyoutJogo = document.querySelector("body > div");
+       var numMovimentos = 0;
+
+       raposa.addEventListener("click", function(){
+            if(jogo.colocarRaposaBarco()){
+              gravarLog("colocou_raposa_barco");
+            }
+       });
+       galinha.addEventListener("click", function(){
+            if(jogo.colocarGalinhaBarco()){
+              gravarLog("colocou_galinha_barco");
+            }
+       });
+       milho.addEventListener("click", function(){
+            if(jogo.colocarMilhoBarco()){
+              gravarLog("colocou_milho_barco")
+            }
+       });
+       var botoesBarco = document.querySelectorAll("#barco button");
+
+       //Ao apertar o botão de atravessar
+       botoesBarco[0].addEventListener("click", function(){
+          if(jogo.raposa.estaBarco){
+            jogo.mudarLadoRaposa();
+          } else if(jogo.galinha.estaBarco){
+            jogo.mudarLadoGalinha();
+          }else if(jogo.milho.estaBarco){
+            jogo.mudarLadoMilho();
+          }
+          jogo.mudarLadoBarco();
+          gravarLog("atravessou_barco_magem_"+Number(jogo.barco));
+          if(jogo.jogoPerdido()){
+              desenhaFimJogo();
+          }
+
+       });
+
+       //Ao aperar o botao de retirar
+       botoesBarco[1].addEventListener("click", function(){
+         if(!jogo.barcoVazio()){
+             var retorno = jogo.retirarAnimalBarco();
+             gravarLog("retirou_"+retorno.animal+"_margem_"+Number(retorno.lado));
+             if(jogo.todosAtravessaram()){
+                 desenhaFimJogo();
+             }
+         }
+       });
+
+      function desenha(){
+        desenhaBarco();
+        desenhaRaposa();
+        desenhaGalinha();
+        desenhaMilho();
+      }
+
+    //Desenha o barco
+      function desenhaBarco(){
+        if(!jogo.barco){
+         barco.style.left= 32+"%";
+         barco.style.top =  260+"px";
+        }else if (jogo.barco){
+          barco.style.left= 48+"%";
+          barco.style.top =  260+"px";
+        }
+      }
+
+     //Desenha a raposa
+      function desenhaRaposa(){
+        if(jogo.raposa.estaBarco){
+            colocaBarco(raposa);
+        }else if(!jogo.raposa.lado){
+            raposa.style.left = 30+"%";
+            raposa.style.top = 100+"px";
+        }else {
+            raposa.style.left = 75+"%";
+            raposa.style.top = 100+"px"
+        }
+      }
+
+     //Desenha a galinha
+      function desenhaGalinha(){
+        if(jogo.galinha.estaBarco){
+          colocaBarco(galinha);
+        }else if(!jogo.galinha.lado){
+            galinha.style.left = 25+"%";
+            galinha.style.top = 220+"px";
+        }else {
+            galinha.style.left = 70+"%";
+            galinha.style.top = 220+"px";
+        }
+      }
+
+      //Desenha o saco de milho
+      function desenhaMilho(){
+        if(jogo.milho.estaBarco){
+            colocaBarco(milho);
+        }else if(!jogo.milho.lado){
+            milho.style.left = 15+"%";
+            milho.style.top = 340+"px";
+        }else {
+            milho.style.left = 65+"%";
+            milho.style.top = 385+"px";
+        }
+      }
+
+      //Coloca o que foi passado como parametro dentro do barco
+      function colocaBarco(coisa){
+          if(!jogo.barco){
+            coisa.style.left = 42+"%";
+            coisa.style.top = 260+"px";
+          }else{
+            coisa.style.left = 58+"%";
+            coisa.style.top = 260+"px";
+          }
+      }
+
+      //Desenha o gameOver
+      function desenhaFimJogo(texto){
+            var parent = leyoutJogo;
+            var div = document.createElement("div");
+            div.classList.add("terminoJogo");
+            var h1 = document.createElement("h1");
+            if(!jogo.gameOver){
+              h1.textContent = "Você Ganhou!";
+            }else {
+              h1.textContent = "Você Perdeu!";
+            }
+            var botaoRinicio = document.createElement("button");
+            botaoRinicio.addEventListener("click",limparLog);
+            botaoRinicio.textContent="Reiniciar";
+            div.appendChild(h1);
+            div.appendChild(botaoRinicio);
+            divFimJogo=div;
+            parent.appendChild(div);
+      }
+
+      //Grava o texo lon
+      function gravarLog(texto){
+        var p = document.createElement("p");
+        p.textContent= texto;
+        log.appendChild(p);
+        numMovimentos++;
+      }
+
+      //Limpa o log e reinica o jogo
+      function limparLog(){
+         var parent = log.parentNode;
+         parent.removeChild(log);
+         log = document.createElement("div");
+         parent.appendChild(log);
+         if(!jogo.gameOver){
+           gravarHistorico("ganhou com "+numMovimentos+ " movimentos")
+         }else {
+           gravarHistorico("perdeu com "+numMovimentos+ " movimentos")
+         }
+         leyoutJogo.removeChild(divFimJogo);
+         numMovimentos=0;
+         jogo.reiniciar();
+         desenha();
+      }
+
+      //Grava no historico a quantidade de movimentos e se ganhou ou não
+      function gravarHistorico(texto){
+        var p = document.createElement("p");
+        if(!jogo.gameOver){
+          p.style.color = 'green';
+        }else{
+            p.style.color = 'red';
+        }
+        p.textContent= texto;
+        historico.appendChild(p);
+      }
+      jogo.callUpdate = desenha;
+      desenha();
+    </script>
+  </body>
+</html>
