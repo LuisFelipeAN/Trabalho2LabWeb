@@ -420,10 +420,7 @@
 
       //Limpa o log e reinica o jogo
       function limparLog(){
-         var parent = log.parentNode;
-         parent.removeChild(log);
-         log = document.createElement("div");
-         parent.appendChild(log);
+         log.innerHTML="";
          if(!jogo.gameOver){
            gravarHistorico("ganhou com "+numMovimentos+ " movimentos")
          }else {
