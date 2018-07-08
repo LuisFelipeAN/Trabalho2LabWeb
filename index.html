@@ -170,6 +170,7 @@
          milho :  { lado: false, estaBarco : false},
          barco: false,
          gameOver : false,
+         numMovimentos: 0,
          mudarLadoRaposa: function (){
              this.raposa.lado=!this.raposa.lado;
          },
@@ -181,12 +182,14 @@
          },
          mudarLadoBarco: function (){
               this.barco=!this.barco;
+              this.numMovimentos++;
               this.callUpdate();
          },
          colocarRaposaBarco: function(){
            if(this.raposa.lado==this.barco&&this.barcoVazio()){
              this.raposa.estaBarco=!this.raposa.estaBarco;
              this.callUpdate();
+             this.numMovimentos++;
              return true;
            }else return false;
 
@@ -195,6 +198,7 @@
            if(this.galinha.lado==this.barco&&this.barcoVazio()){
              this.galinha.estaBarco=!this.galinha.estaBarco;
              this.callUpdate();
+             this.numMovimentos++;
              return true;
            }else return false;
          },
@@ -202,6 +206,7 @@
            if(this.milho.lado==this.barco&&this.barcoVazio()){
              this.milho.estaBarco=!this.milho.estaBarco;
              this.callUpdate();
+             this.numMovimentos++;
              return true;
            }else return false;
          },
@@ -209,14 +214,17 @@
            if(this.raposa.estaBarco){
              this.raposa.estaBarco=false;
              this.callUpdate();
+             this.numMovimentos++;
              return {animal: "raposa",lado: this.raposa.lado};
            }else if(this.galinha.estaBarco){
               this.galinha.estaBarco=false;
               this.callUpdate();
+              this.numMovimentos++;
               return {animal: "galinha",lado: this.galinha.lado};
            }else if( this.milho.estaBarco){
               this.milho.estaBarco=false;
               this.callUpdate();
+              this.numMovimentos++;
               return {animal: "milho",lado: this.milho.lado};
            }
 
@@ -246,6 +254,7 @@
            this.milho.estaBarco=false;
            this.barco=false;
            this.gameOver=false;
+           this.numMovimentos=0;
          },
          jogoPerdido:function(){
            //verifica se a galinha ficou sozinha com a raposa
@@ -275,7 +284,6 @@
        var historico = document.querySelector('.historico > div');
        var divFimJogo = null;
        var leyoutJogo = document.querySelector("body > div");
-       var numMovimentos = 0;
 
        raposa.addEventListener("click", function(){
             if(jogo.colocarRaposaBarco()){
@@ -415,16 +423,15 @@
         var p = document.createElement("p");
         p.textContent= texto;
         log.appendChild(p);
-        numMovimentos++;
       }
 
       //Limpa o log e reinica o jogo
       function limparLog(){
          log.innerHTML="";
          if(!jogo.gameOver){
-           gravarHistorico("ganhou com "+numMovimentos+ " movimentos")
+           gravarHistorico("ganhou com "+jogo.numMovimentos+ " movimentos")
          }else {
-           gravarHistorico("perdeu com "+numMovimentos+ " movimentos")
+           gravarHistorico("perdeu com "+jogo.numMovimentos+ " movimentos")
          }
          leyoutJogo.removeChild(divFimJogo);
          numMovimentos=0;
